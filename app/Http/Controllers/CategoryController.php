@@ -27,7 +27,8 @@ class CategoryController extends Controller
      */
     public function create()
     {
-        return view('category.create');
+        $categories = Category::latest('id')->limit(3)->get();
+        return view('category.create', compact('categories'));
     }
 
     /**
