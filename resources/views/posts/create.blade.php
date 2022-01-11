@@ -11,7 +11,7 @@
                     </div>
 
                     <div class="card-body">
-                        <form action="{{ route('post.store') }}" method="post">
+                        <form action="{{ route('post.store') }}" method="post" enctype="multipart/form-data">
                             @csrf
 
                             <div class="mb-3">
@@ -37,6 +37,16 @@
                             </div>
 
                             <div class="mb-3">
+                                <lable class="form-label">Photos</lable>
+                                <input type="file" class="form-control @error('photo')
+                                    is-invalid
+                                @enderror" name="photo[]" value="{{ old('photo') }}" multiple>
+                                @error('photo')
+                                    <span class="small text-danger">{{ $message }}</span>
+                                @enderror
+                            </div>
+
+                            <div class="mb-3">
                                 <label for="" class="form-label">Post Description</label>
                                 <textarea type="text" rows="10" class="form-control @error('description') is-invalid @enderror" name="description">{{ old('description') }}</textarea>
                                     {{ old('description') }}
@@ -55,6 +65,15 @@
                             </div>
                         </form>
 
+                        @if ($errors->any())
+                        <div class="alert alert-danger">
+                            <ul>
+                                @foreach ($errors->all() as $error)
+                                    <li>{{ $error }}</li>
+                                @endforeach
+                            </ul>
+                        </div>
+                        @endif
 
                     </div>
                 </div>
