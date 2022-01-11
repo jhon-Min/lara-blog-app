@@ -4,9 +4,6 @@
     <div class="container">
         <div class="row">
             <div class="col-12">
-                <div class="mb-3">
-                    <a href="{{ route('category.index') }}" class="btn btn-success">Category Lists</a>
-                </div>
 
                 <div class="card">
                     <div class="card-header">
@@ -83,6 +80,10 @@
                                         @endforelse
                                     </tbody>
                                 </table>
+
+                                <div class="mt-4 text-center">
+                                    <a href="{{ route('category.index') }}" class="btn btn-outline-primary w-100">Category Lists</a>
+                                </div>
                             </div>
                         </div>
                     </div>

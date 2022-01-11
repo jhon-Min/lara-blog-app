@@ -32,9 +32,33 @@
 
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
                     <!-- Left Side Of Navbar -->
-                    <ul class="navbar-nav me-auto">
+                    @auth
+                        <ul class="navbar-nav me-auto">
+                            <li class="nav-item">
+                                <a href="{{ route('home') }}" class="nav-link">Home</a>
+                            </li>
 
-                    </ul>
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    Category
+                                </a>
+                                <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                  <li><a class="dropdown-item" href="{{ route('category.index') }}">Category Lists</a></li>
+                                  <li><a class="dropdown-item" href="{{ route('category.create') }}">Create Category</a></li>
+                                </ul>
+                            </li>
+
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    Post
+                                </a>
+                                <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                  <li><a class="dropdown-item" href="{{ route('post.index') }}">Post Lists</a></li>
+                                  <li><a class="dropdown-item" href="{{ route('post.create') }}">Create Post</a></li>
+                                </ul>
+                            </li>
+                        </ul>
+                    @endauth
 
                     <!-- Right Side Of Navbar -->
                     <ul class="navbar-nav ms-auto">
