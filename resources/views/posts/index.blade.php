@@ -65,7 +65,9 @@
                                         <td class="small">{{ Str::words($post->title, 5, '...') }}</td>
                                         <td>
                                            @forelse ($post->photos as $photo)
-                                            <img src="{{ asset('storage/thumbnail/'.$photo->name) }}" height="30" alt="">
+                                            <a class="venobox" data-gall="img{{ $post->id }}" data-maxwidth="900px" href="{{ asset('storage/photo/'.$photo->name) }}">
+                                               <img src="{{ asset('storage/thumbnail/'.$photo->name) }}" height="30" alt="image alt"/>
+                                            </a>
                                            @empty
                                             No Photo
                                            @endforelse

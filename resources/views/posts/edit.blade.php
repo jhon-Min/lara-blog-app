@@ -71,7 +71,9 @@
                                             <i class="fas fa-trash-alt fa-fw"></i>
                                         </button>
                                     </form>
-                                    <img src="{{ asset('storage/thumbnail/'.$photo->name) }}" height="100" class="me-2" alt="">
+                                    <a class="venobox" data-gall="img{{ $post->id }}" href="{{ asset('storage/photo/'.$photo->name) }}">
+                                        <img src="{{ asset('storage/thumbnail/'.$photo->name) }}" class="me-2 rounded-3 shadow-sm" height="100" alt="image alt"/>
+                                     </a>
                                 </div>
                                 @empty
                                     No Photo
