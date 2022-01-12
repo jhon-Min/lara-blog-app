@@ -65,7 +65,7 @@
                                         <td class="small">{{ Str::words($post->title, 5, '...') }}</td>
                                         <td>
                                            @forelse ($post->photos as $photo)
-                                            <img src="{{ asset('storage/photo/'.$photo->name) }}" height="30" alt="">
+                                            <img src="{{ asset('storage/thumbnail/'.$photo->name) }}" height="30" alt="">
                                            @empty
                                             No Photo
                                            @endforelse

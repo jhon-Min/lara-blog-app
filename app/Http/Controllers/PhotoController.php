@@ -5,6 +5,9 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StorePhotoRequest;
 use App\Http\Requests\UpdatePhotoRequest;
 use App\Models\Photo;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
+use Intervention\Image\Facades\Image;
 
 class PhotoController extends Controller
 {
@@ -36,7 +39,39 @@ class PhotoController extends Controller
      */
     public function store(StorePhotoRequest $request)
     {
-        //
+        $request->validate([
+            "post_id" => "required|integer",
+            "photo" => "nullable",
+            "photo.*" => "file|max:3000|mimes:jpg,png"
+        ]);
+
+
+        if($request->hasFile('photo')){
+
+            foreach ($request->file('photo') as $photo){
+
+                //store file
+                $newName = uniqid()."_photo.".$photo->extension();
+                $photo->storeAs("public/photo/",$newName);//storage
+
+                //making thumbnail
+                $img = Image::make($photo);
+                //reduce photo size
+                $img->fit(200,200);
+                $img->save("storage/thumbnail/".$newName);//public
+
+                //save in db
+                $p = new Photo();
+                $p->name = $newName;
+                $p->post_id = $request->post_id;
+                $p->user_id = Auth::id();
+                $p->save();
+
+            }
+
+        }
+
+        return redirect()->back()->with('status','Post Photo Added');
     }
 
     /**
@@ -81,6 +116,13 @@ class PhotoController extends Controller
      */
     public function destroy(Photo $photo)
     {
-        //
+        // orginal file and thumbnail delete
+        Storage::delete("public/photo/".$photo->name);
+        Storage::delete("public/thumbnail/".$photo->name);
+
+        // delete db record
+        $photo->delete();
+
+        return redirect()->back()->with('status', 'Photo deleted.');
     }
 }
