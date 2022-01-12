@@ -71,7 +71,7 @@ class PhotoController extends Controller
 
         }
 
-        return redirect()->back()->with('status','Post Photo Added');
+        return redirect()->back()->with('status','Success post photo changes.');
     }
 
     /**

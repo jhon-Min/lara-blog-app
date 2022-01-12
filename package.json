@@ -23,6 +23,8 @@
     "dependencies": {
         "@fortawesome/fontawesome-free": "^5.15.4",
         "animate.css": "^4.1.1",
-        "jquery": "^3.6.0"
+        "jquery": "^3.6.0",
+        "sweetalert2": "^11.3.4",
+        "venobox": "^2.0.4"
     }
 }
