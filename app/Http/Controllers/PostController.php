@@ -5,9 +5,12 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StorePostRequest;
 use App\Http\Requests\UpdatePostRequest;
 use App\Models\Category;
+use App\Models\Photo;
 use App\Models\Post;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use Intervention\Image\Facades\Image;
 
 class PostController extends Controller
 {
@@ -46,7 +49,9 @@ class PostController extends Controller
         $request->validate([
             "title" => "required|min:3|max:255",
             "category" => "required|integer|exists:categories,id",
-            "description" => "required|min:10"
+            "description" => "required|min:10",
+            "photo" => "nullable",
+            "photo.*" => "file|max:3000|mimes:jpg,png"
         ]);
 
         $post = new Post();
@@ -58,6 +63,35 @@ class PostController extends Controller
         $post->category_id = $request->category;
         $post->is_publish = true;
         $post->save();
+
+        // folder ma shi yin auto folder create
+        if(!Storage::exists("public/thumbnail")){
+            Storage::makeDirectory("public/thumbnail");
+        }
+
+        // Check file and loop
+        if($request->hasFile('photo')){
+            foreach ($request->file('photo') as $photo) {
+
+                // store file
+                $newName = uniqid()."_photo.".$photo->extension();
+                $photo->storeAs("public/photo/", $newName);
+
+                // making thumbnail
+                $img = Image::make($photo);
+
+                // reduce img size
+                $img->fit(200, 200);
+                $img->save("storage/thumbnail/".$newName);
+
+                // save in db
+                $p = new Photo();
+                $p->name = $newName;
+                $p->post_id = $post->id;
+                $p->user_id = Auth::id();
+                $p->save();
+            }
+        }
 
         return redirect()->route('post.index')->with('status', 'Post create success.');
     }

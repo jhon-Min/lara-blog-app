@@ -15892,3 +15892,6 @@ textarea.form-control-lg {
     display: none !important;
   }
 }
+.btn-del-img {
+  margin-top: -54px;
+}

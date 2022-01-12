@@ -11,48 +11,89 @@
                     </div>
 
                     <div class="card-body">
-                        <form action="{{ route('post.update', $post->id) }}" method="post">
+                        <form action="{{ route('post.update', $post->id) }}" id="postUpdateForm" method="post">
                             @csrf
                             @method('put')
-
-                            <div class="mb-3">
-                                <lable class="form-label">Post Title</lable>
-                                <input type="text" class="form-control @error('title')
-                                    is-invalid
-                                @enderror" name="title" value="{{ old('title', $post->title) }}">
-                                @error('title')
-                                    <span class="small text-danger">{{ $message }}</span>
-                                @enderror
-                            </div>
-
-                            <div class="mb-3">
-                                <label for="" class="form-label">Select Category</label>
-                                <select class="form-select @error('category') is-invalid @enderror" name="category">
-                                    @foreach(\App\Models\Category::all() as $category)
-                                        <option value="{{ $category->id }}" {{ $category->id == old('category',$post->category_id) ? 'selected' : '' }}>{{ $category->title }}</option>
-                                    @endforeach
-                                </select>
-                                @error('category')
-                                    <span class="text-danger small">{{ $message }}</span>
-                                @enderror
-                            </div>
-
-                            <div class="mb-3">
-                                <label for="" class="form-label">Post Description</label>
-                                <textarea type="text" rows="10" class="form-control @error('description') is-invalid @enderror" name="description"> {{ old('description', $post->description) }}</textarea>
-                                @error('description')
-                                    <span class="samll text-danger">{{ $message }}</span>
-                                @enderror
-                            </div>
-
-                            <div class="d-flex justify-content-between align-items-center">
-                                <div class="form-check form-switch">
-                                    <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefault" required>
-                                    <label class="form-check-label" for="flexSwitchCheckDefault">Confirm</label>
-                                </div>
-                                <button class="btn btn-lg btn-primary">Create Post</button>
-                            </div>
                         </form>
+
+                        <div class="mb-3">
+                            <lable class="form-label">Post Title</lable>
+                            <input type="text" class="form-control @error('title')
+                                is-invalid
+                            @enderror" form="postUpdateForm" name="title" value="{{ old('title', $post->title) }}">
+                            @error('title')
+                                <span class="small text-danger">{{ $message }}</span>
+                            @enderror
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="" class="form-label">Select Category</label>
+                            <select class="form-select @error('category') is-invalid @enderror" form="postUpdateForm" name="category">
+                                @foreach(\App\Models\Category::all() as $category)
+                                    <option value="{{ $category->id }}" {{ $category->id == old('category',$post->category_id) ? 'selected' : '' }}>{{ $category->title }}</option>
+                                @endforeach
+                            </select>
+                            @error('category')
+                                <span class="text-danger small">{{ $message }}</span>
+                            @enderror
+                        </div>
+
+                        {{-- Select Photo --}}
+                        <div class="mb-3">
+                            <div class="form-label">Select Photo</div>
+                            <div class="border rounded p-2 d-flex" style="overflow-x: scroll">
+
+                                <form action="{{ route('photo.store') }}" class="d-none" id="photoUploadForm" method="POST" enctype="multipart/form-data">
+                                    @csrf
+                                    <input type="hidden" name="post_id" value="{{ $post->id }}"">
+                                    <div class="mb-3">
+                                        <label for="" class="form-label">Select Photo</label>
+                                        <input type="file" class="form-control @error('photo')
+                                            is-invalid
+                                        @enderror" id="photoInput" name="photo[]" value="{{ old('photo') }}" multiple>
+                                        @error('photo')
+                                            <p class="text-danger small">{{ $message }}</p>
+                                        @enderror
+                                    </div>
+                                    <button>Upload Photo</button>
+                                </form>
+
+                                <div class="border border-2 border-dark rounded-3 me-1 uploader-ui d-flex justify-content-center align-items-center px-3" id="photoUploadUi">
+                                    <i class="fas fa-plus fa-2x"></i>
+                                </div>
+
+                                @forelse ($post->photos as $photo)
+                                <div class="position-relative">
+                                    <form action="{{ route('photo.destroy', $photo->id) }}" method="POST" class="position-absolute bottom-0">
+                                        @csrf
+                                        @method('delete')
+                                        <button class="btn btn-sm btn-danger">
+                                            <i class="fas fa-trash-alt fa-fw"></i>
+                                        </button>
+                                    </form>
+                                    <img src="{{ asset('storage/thumbnail/'.$photo->name) }}" height="100" class="me-2" alt="">
+                                </div>
+                                @empty
+                                    No Photo
+                                @endforelse
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="" class="form-label">Post Description</label>
+                            <textarea type="text" rows="10" form="postUpdateForm" class="form-control @error('description') is-invalid @enderror" name="description"> {{ old('description', $post->description) }}</textarea>
+                            @error('description')
+                                <span class="samll text-danger">{{ $message }}</span>
+                            @enderror
+                        </div>
+
+                        <div class="d-flex justify-content-between align-items-center mt-5">
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefault" form="postUpdateForm" required>
+                                <label class="form-check-label" for="flexSwitchCheckDefault">Confirm</label>
+                            </div>
+                            <button form="postUpdateForm" class="btn btn-lg btn-primary">Create Post</button>
+                        </div>
 
 
                     </div>
@@ -60,4 +101,21 @@
             </div>
         </div>
     </div>
+
+
+    <script>
+
+        let photoUploadForm = document.getElementById('photoUploadForm');
+        let photoInput = document.getElementById('photoInput');
+        let photoUploadUi = document.getElementById('photoUploadUi');
+
+        photoUploadUi.addEventListener('click',function (){
+            photoInput.click();
+            console.log('click add ui')
+        })
+
+        photoInput.addEventListener('change',function (){
+            photoUploadForm.submit();
+        })
+    </script>
 @endsection
