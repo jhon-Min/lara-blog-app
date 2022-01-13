@@ -34,16 +34,6 @@
                             </form>
                        </div>
 
-                        @if (session('status'))
-                            <p class="alert alert-success">
-                                {{ session('status') }}
-                            </p>
-                        @endif
-
-                        @if (session('delStatus'))
-                            <p class="alert alert-danger">{{ session('delStatus') }}</p>
-                        @endif
-
                         <table class="table table-hover align-middle">
                             <thead>
                                 <tr>
@@ -61,12 +51,18 @@
                             <tbody>
                                 @forelse ($posts as $post)
                                     <tr>
-                                        <td>{{ $post->id }}</td>
-                                        <td class="small">{{ Str::words($post->title, 5, '...') }}</td>
                                         <td>
-                                           @forelse ($post->photos as $photo)
-                                            <a class="venobox" data-gall="img{{ $post->id }}" data-maxwidth="900px" href="{{ asset('storage/photo/'.$photo->name) }}">
-                                               <img src="{{ asset('storage/thumbnail/'.$photo->name) }}" height="30" alt="image alt"/>
+                                            {{ $post->id }}
+                                        </td>
+                                        <td class="small">
+                                            <a href="{{ route('post.show', $post->id) }}" class="text-decoration-none text-dark">
+                                                {{ Str::words($post->title, 5, '...') }}
+                                            </a>
+                                        </td>
+                                        <td>
+                                           @forelse ($post->photos()->latest('id')->limit(3)->get() as $photo)
+                                            <a class="venobox" data-gall="img{{ $post->id }}" data-maxwidth="1000px" href="{{ asset('storage/photo/'.$photo->name) }}">
+                                               <img src="{{ asset('storage/thumbnail/'.$photo->name) }}" class="rounded-circle shadow-sm" height="30" alt="image alt"/>
                                             </a>
                                            @empty
                                             No Photo

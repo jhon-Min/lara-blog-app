@@ -76,7 +76,7 @@
                                      </a>
                                 </div>
                                 @empty
-                                    No Photo
+                                 <p class="text-muted ms-2 py-4">No Photo</p>
                                 @endforelse
                             </div>
                         </div>

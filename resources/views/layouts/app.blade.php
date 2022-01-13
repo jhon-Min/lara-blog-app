@@ -102,6 +102,29 @@
     </div>
 
     <script src="{{ asset('js/app.js') }}"></script>
+
+    @if (session('status'))
+        <script>
+            const Toast = Swal.mixin({
+                toast: true,
+                position: 'top-end',
+                showConfirmButton: false,
+                timer: 2000,
+                timerProgressBar: true,
+                didOpen: (toast) => {
+                    toast.addEventListener('mouseenter', Swal.stopTimer)
+                    toast.addEventListener('mouseleave', Swal.resumeTimer)
+                }
+            })
+
+            Toast.fire({
+                icon: 'success',
+                title: '{{ session('status') }}'
+            })
+        </script>
+    @endif
+
+
     <script>
         new VenoBox({
             selector: '.venobox'

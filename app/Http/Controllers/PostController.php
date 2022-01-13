@@ -151,7 +151,14 @@ class PostController extends Controller
      */
     public function destroy(Post $post)
     {
-        $post->delete();
-        return redirect()->back()->with('delStatus', "Deleted!");
+        foreach ($post->photos as $photo) {
+            // orginal file and thumbnail delete
+            Storage::delete("public/photo/".$photo->name);
+            Storage::delete("public/thumbnail/".$photo->name);
+        }
+
+        // delete db record use hasmany
+        $post->photos()->delete();
+        return redirect()->back()->with('status', "Deleted!");
     }
 }
