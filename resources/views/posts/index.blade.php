@@ -62,7 +62,7 @@
                                         <td>
                                            @forelse ($post->photos()->latest('id')->limit(3)->get() as $photo)
                                             <a class="venobox" data-gall="img{{ $post->id }}" data-maxwidth="1000px" href="{{ asset('storage/photo/'.$photo->name) }}">
-                                               <img src="{{ asset('storage/thumbnail/'.$photo->name) }}" class="rounded-circle shadow-sm" height="30" alt="image alt"/>
+                                               <img src="{{ asset('storage/thumbnail/'.$photo->name) }}" class="rounded-circle post-list-thumbnail border border-2 border-white shadow-sm" height="30" alt="image alt"/>
                                             </a>
                                            @empty
                                             No Photo
