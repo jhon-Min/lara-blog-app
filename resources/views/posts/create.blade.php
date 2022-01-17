@@ -24,11 +24,11 @@
                                 @enderror
                             </div>
 
-                            <div class="mb-3">
+                            <div class="mb-4">
                                 <label for="" class="form-label">Select Category</label>
                                 <select class="form-select @error('category') is-invalid @enderror" name="category">
                                     @foreach (\App\Models\Category::all() as $category)
-                                        <option value="{{ $category->id }}">{{ $category->title }}</option>
+                                        <option value="{{ $category->id }}" {{ $category->id == old('category') ? 'selected' : '' }}>{{ $category->title }}</option>
                                     @endforeach
                                 </select>
                                 @error('category')
@@ -36,12 +36,38 @@
                                 @enderror
                             </div>
 
+                            {{-- Tag --}}
+                            <div class="mb-4">
+                                <label for="" class="form-label">Select Tags</label>
+                                <br>
+                                @foreach (\App\Models\Tag::all() as $tag)
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="checkbox" value="{{ $tag->id }}" name="tags[]" id="tag{{ $tag->id }}" {{ in_array($tag->id,old('tags', [])) ? 'checked' : '' }}>
+                                    <label class="form-check-label" for="tag{{ $tag->id }}">
+                                      {{ $tag->title }}
+                                    </label>
+                                </div>
+                                @endforeach
+
+                                <br>
+
+                                @error('tags')
+                                    <span class="small text-danger">{{ $message }}</span>
+                                @enderror
+                                @error('tags.*')
+                                    <span class="small text-danger">{{ $message }}</span>
+                                @enderror
+                            </div>
+
                             <div class="mb-3">
                                 <lable class="form-label">Photos</lable>
-                                <input type="file" class="form-control @error('photo')
+                                <input type="file" class="form-control @error('photos')
                                     is-invalid
-                                @enderror" name="photo[]" value="{{ old('photo') }}" multiple>
-                                @error('photo')
+                                @enderror" name="photos[]" multiple>
+                                @error('photos')
+                                    <span class="small text-danger">{{ $message }}</span>
+                                @enderror
+                                @error('photos.*')
                                     <span class="small text-danger">{{ $message }}</span>
                                 @enderror
                             </div>

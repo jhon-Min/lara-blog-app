@@ -41,14 +41,14 @@ class PhotoController extends Controller
     {
         $request->validate([
             "post_id" => "required|integer",
-            "photo" => "nullable",
-            "photo.*" => "file|max:3000|mimes:jpg,png"
+            "photos" => "nullable",
+            "photos.*" => "file|max:3000|mimes:jpg,png"
         ]);
 
 
-        if($request->hasFile('photo')){
+        if($request->hasFile('photos')){
 
-            foreach ($request->file('photo') as $photo){
+            foreach ($request->file('photos') as $photo){
 
                 //store file
                 $newName = uniqid()."_photo.".$photo->extension();
