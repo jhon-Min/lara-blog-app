@@ -26,6 +26,7 @@
                             @enderror
                         </div>
 
+                        {{-- Category --}}
                         <div class="mb-3">
                             <label for="" class="form-label">Select Category</label>
                             <select class="form-select @error('category') is-invalid @enderror" form="postUpdateForm" name="category">
@@ -35,6 +36,29 @@
                             </select>
                             @error('category')
                                 <span class="text-danger small">{{ $message }}</span>
+                            @enderror
+                        </div>
+
+                          {{-- Tag --}}
+                          <div class="mb-4">
+                            <label for="" class="form-label">Select Tags</label>
+                            <br>
+                            @foreach (\App\Models\Tag::all() as $tag)
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="checkbox" value="{{ $tag->id }}" name="tags[]" form="postUpdateForm" id="tag{{ $tag->id }}"  {{ in_array($tag->id, old('tags', $post->tags->pluck('id')->toArray())) ? "checked" : "" }}>
+                                <label class="form-check-label" for="tag{{ $tag->id }}">
+                                  {{ $tag->title }}
+                                </label>
+                            </div>
+                            @endforeach
+
+                            <br>
+
+                            @error('tags')
+                                <span class="small text-danger">{{ $message }}</span>
+                            @enderror
+                            @error('tags.*')
+                                <span class="small text-danger">{{ $message }}</span>
                             @enderror
                         </div>
 
@@ -48,10 +72,13 @@
                                     <input type="hidden" name="post_id" value="{{ $post->id }}"">
                                     <div class="mb-3">
                                         <label for="" class="form-label">Select Photo</label>
-                                        <input type="file" class="form-control @error('photo')
+                                        <input type="file" class="form-control @error('photos')
                                             is-invalid
-                                        @enderror" id="photoInput" name="photo[]" value="{{ old('photo') }}" multiple>
-                                        @error('photo')
+                                        @enderror" id="photoInput" name="photos[]" multiple>
+                                        @error('photos')
+                                            <p class="text-danger small">{{ $message }}</p>
+                                        @enderror
+                                        @error('photos.*')
                                             <p class="text-danger small">{{ $message }}</p>
                                         @enderror
                                     </div>
@@ -94,7 +121,7 @@
                                 <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefault" form="postUpdateForm" required>
                                 <label class="form-check-label" for="flexSwitchCheckDefault">Confirm</label>
                             </div>
-                            <button form="postUpdateForm" class="btn btn-lg btn-primary">Create Post</button>
+                            <button form="postUpdateForm" class="btn btn-lg btn-primary">Update Post</button>
                         </div>
 
 

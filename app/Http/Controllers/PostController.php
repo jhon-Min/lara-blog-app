@@ -50,8 +50,10 @@ class PostController extends Controller
             "title" => "required|min:3|max:255",
             "category" => "required|integer|exists:categories,id",
             "description" => "required|min:10",
-            "photo" => "nullable",
-            "photo.*" => "file|max:3000|mimes:jpg,png"
+            "photos" => "nullable",
+            "photos.*" => "file|max:3000|mimes:jpg,png",
+            "tags" => "required",
+            "tags.*" => "integer|exists:tags,id"
         ]);
 
         $post = new Post();
@@ -64,14 +66,17 @@ class PostController extends Controller
         $post->is_publish = true;
         $post->save();
 
+        // save tag to pivot table
+        $post->tags()->attach($request->tags);
+
         // folder ma shi yin auto folder create
         if(!Storage::exists("public/thumbnail")){
             Storage::makeDirectory("public/thumbnail");
         }
 
         // Check file and loop
-        if($request->hasFile('photo')){
-            foreach ($request->file('photo') as $photo) {
+        if($request->hasFile('photos')){
+            foreach ($request->file('photos') as $photo) {
 
                 // store file
                 $newName = uniqid()."_photo.".$photo->extension();
@@ -140,6 +145,12 @@ class PostController extends Controller
        $post->category_id = $request->category;
        $post->update();
 
+        // delete db record from pivot table
+        $post->tags()->detach();
+
+        // save tag to pivot table
+        $post->tags()->attach($request->tags);
+
        return redirect()->route('post.index')->with('status', 'Update Success.');
     }
 
@@ -159,6 +170,12 @@ class PostController extends Controller
 
         // delete db record use hasmany
         $post->photos()->delete();
+
+        // delete db record from pivot table
+        $post->tags()->detach();
+
+        $post->delete();
+
         return redirect()->back()->with('status', "Deleted!");
     }
 }
