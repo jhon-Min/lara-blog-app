@@ -36,6 +36,10 @@
                                 <a href="{{ route('home') }}" class="nav-link">Home</a>
                             </li>
 
+                            <li class="nav-item">
+                                <a href="{{ route('photo.index') }}" class="nav-link">My Upload Photo</a>
+                            </li>
+
                             <li class="nav-item dropdown">
                                 <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                                     Category
