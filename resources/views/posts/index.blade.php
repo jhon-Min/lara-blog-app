@@ -56,11 +56,15 @@
                                         </td>
                                         <td class="small">
                                             <a href="{{ route('post.show', $post->id) }}" class="text-decoration-none text-dark">
-                                                {{ Str::words($post->title, 5, '...') }}
+                                                {{ $post->short_title }}
                                             </a>
                                         </td>
                                         <td>
-                                           @forelse ($post->photos()->latest('id')->limit(3)->get() as $photo)
+                                           @forelse ($post->photos as $key=>$photo)
+
+                                            @if ($key === 3)
+                                                @break
+                                            @endif
                                             <a class="venobox" data-gall="img{{ $post->id }}" data-maxwidth="1000px" href="{{ asset('storage/photo/'.$photo->name) }}">
                                                <img src="{{ asset('storage/thumbnail/'.$photo->name) }}" class="rounded-circle post-list-thumbnail border border-2 border-white shadow-sm" height="30" alt="image alt"/>
                                             </a>
@@ -97,14 +101,7 @@
                                             </form>
                                         </td>
                                         <td>
-                                            <p class="small mb-0">
-                                                <i class="fas fa-calendar"></i>
-                                                {{ $post->created_at->format("Y-m-d") }}
-                                            </p>
-                                            <p class="mb-0 small">
-                                                <i class="fas fa-clock"></i>
-                                                {{ $post->created_at->format("H:i a") }}
-                                            </p>
+                                           {!! $post->show_time !!}
                                         </td>
                                     </tr>
                                 @empty
