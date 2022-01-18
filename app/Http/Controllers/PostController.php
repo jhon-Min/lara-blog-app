@@ -8,6 +8,7 @@ use App\Models\Category;
 use App\Models\Photo;
 use App\Models\Post;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Intervention\Image\Facades\Image;
@@ -21,10 +22,7 @@ class PostController extends Controller
      */
     public function index()
     {
-        $posts = Post::when(isset(request()->search), function ($query){
-            $search = request()->search;
-            $query->where('title', "LIKE", "%$search%")->orWhere('description', "LIKE", "%$search%");
-        })->latest('id')->paginate(5);
+        $posts = Post::search()->latest('id')->paginate(5);
         return view('posts.index', compact('posts'));
     }
 
@@ -56,46 +54,54 @@ class PostController extends Controller
             "tags.*" => "integer|exists:tags,id"
         ]);
 
-        $post = new Post();
-        $post->title = $request->title;
-        $post->slug = Str::slug($request->title);
-        $post->description = $request->description;
-        $post->except = Str::words($request->description, 20);
-        $post->user_id = Auth::id();
-        $post->category_id = $request->category;
-        $post->is_publish = true;
-        $post->save();
+        DB::beginTransaction();
+        try {
+            $post = new Post();
+            $post->title = $request->title;
+            $post->slug = $request->title;
+            $post->description = $request->description;
+            $post->except = Str::words($request->description, 20);
+            $post->user_id = Auth::id();
+            $post->category_id = $request->category;
+            $post->is_publish = true;
+            $post->save();
 
-        // save tag to pivot table
-        $post->tags()->attach($request->tags);
+            // save tag to pivot table
+            $post->tags()->attach($request->tags);
 
-        // folder ma shi yin auto folder create
-        if(!Storage::exists("public/thumbnail")){
-            Storage::makeDirectory("public/thumbnail");
-        }
-
-        // Check file and loop
-        if($request->hasFile('photos')){
-            foreach ($request->file('photos') as $photo) {
-
-                // store file
-                $newName = uniqid()."_photo.".$photo->extension();
-                $photo->storeAs("public/photo/", $newName);
-
-                // making thumbnail
-                $img = Image::make($photo);
-
-                // reduce img size
-                $img->fit(200, 200);
-                $img->save("storage/thumbnail/".$newName);
-
-                // save in db
-                $p = new Photo();
-                $p->name = $newName;
-                $p->post_id = $post->id;
-                $p->user_id = Auth::id();
-                $p->save();
+            // folder ma shi yin auto folder create
+            if(!Storage::exists("public/thumbnail")){
+                Storage::makeDirectory("public/thumbnail");
             }
+
+            // Check file and loop
+            if($request->hasFile('photos')){
+                foreach ($request->file('photos') as $photo) {
+
+                    // store file
+                    $newName = uniqid()."_photo.".$photo->extension();
+                    $photo->storeAs("public/photo/", $newName);
+
+                    // making thumbnail
+                    $img = Image::make($photo);
+
+                    // reduce img size
+                    $img->fit(200, 200);
+                    $img->save("storage/thumbnail/".$newName);
+
+                    // save in db
+                    $p = new Photo();
+                    $p->name = $newName;
+                    $p->post_id = $post->id;
+                    $p->user_id = Auth::id();
+                    $p->save();
+                }
+            }
+            DB::commit();
+
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            throw $th;
         }
 
         return redirect()->route('post.index')->with('status', 'Post create success.');

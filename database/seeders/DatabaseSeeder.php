@@ -27,10 +27,10 @@ class DatabaseSeeder extends Seeder
             'remember_token' => Str::random(10),
         ]);
 
-        User::factory(15)->create();
-        Category::factory(10)->create();
-        Post::factory(30)->create();
-        Tag::factory(10)->create();
+        User::factory(2)->create();
+        Category::factory(5)->create();
+        Post::factory(2)->create();
+        Tag::factory(5)->create();
 
         Post::all()->each(function($post){
             $aa = Tag::inRandomOrder()->limit(rand(1,3))->get()->pluck('id');
