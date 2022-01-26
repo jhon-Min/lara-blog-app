@@ -27,9 +27,9 @@ class DatabaseSeeder extends Seeder
             'remember_token' => Str::random(10),
         ]);
 
-        User::factory(2)->create();
+        User::factory(5)->create();
         Category::factory(5)->create();
-        Post::factory(2)->create();
+        Post::factory(20)->create();
         Tag::factory(5)->create();
 
         Post::all()->each(function($post){

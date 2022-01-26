@@ -33,11 +33,11 @@
                     @auth
                         <ul class="navbar-nav me-auto">
                             <li class="nav-item">
-                                <a href="{{ route('home') }}" class="nav-link">Home</a>
+                               <x-nav-link rn="home">Home</x-nav-link>
                             </li>
 
                             <li class="nav-item">
-                                <a href="{{ route('photo.index') }}" class="nav-link">My Upload Photo</a>
+                                <x-nav-link rn="photo.index">My upload photo</x-nav-link>
                             </li>
 
                             <li class="nav-item dropdown">
