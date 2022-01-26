@@ -40,6 +40,7 @@
                                 <x-nav-link rn="photo.index">My upload photo</x-nav-link>
                             </li>
 
+                            @onlyAdmin
                             <li class="nav-item dropdown">
                                 <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                                     Category
@@ -49,6 +50,7 @@
                                   <li><a class="dropdown-item" href="{{ route('category.create') }}">Create Category</a></li>
                                 </ul>
                             </li>
+                            @endonlyAdmin
 
                             <li class="nav-item dropdown">
                                 <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">

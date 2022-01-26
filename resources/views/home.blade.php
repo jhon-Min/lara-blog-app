@@ -24,7 +24,12 @@
 
                     <br>
 
-                    @nsm
+                    {{ env('APP_NAME') }}
+
+                    <p>{{ env('MY_AGE', '24') }}</p>
+                    <p>{{ env('DB_CONNECTION') }}</p>
+                    <p>{{ now() }}</p>
+                    <p>{{ config('app.timezone') }}</p>
                 </div>
             </div>
         </div>

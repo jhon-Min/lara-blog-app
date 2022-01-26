@@ -41,5 +41,7 @@ class ViewServiceProvider extends ServiceProvider
         // Blade::directive('nsm', function(){
         //     return "<h3>Hello Min</h3>";
         // });
+
+        Blade::if('onlyAdmin', fn() => auth()->user()->role == 'admin' );
     }
 }
