@@ -13,7 +13,9 @@
 
                        <div class="d-flex justify-content-between">
                             <div class="mb-3">
-                                <a href="{{ route('post.create') }}" class="btn btn-primary">Create Post</a>
+                               @can('create', App\Models\Post::class)
+                               <a href="{{ route('post.create') }}" class="btn btn-primary">Create Post</a>
+                               @endcan
 
                                 @isset(request()->search)
                                 <a href="{{ route('post.index') }}" class="btn btn-outline-primary ms-3">
@@ -84,21 +86,31 @@
                                         <td>{{ $post->user->name }}</td>
                                         <td>
                                            <div class="btn-group">
+                                                @can('view', $post)
                                                 <a href="{{ route('post.show', $post->id) }}" class="btn btn-sm btn-outline-primary">
                                                     <i class="fas fa-info-circle fa-fw"></i>
                                                 </a>
+                                                @endcan
+
+                                                @can('update', $post)
                                                 <a href="{{ route('post.edit', $post->id) }}" class="btn btn-sm btn-outline-primary">
                                                     <i class="fas fa-pencil-alt fa-fw"></i>
                                                 </a>
-                                                <button form="postDelForm{{ $post->id }}" class="btn btn-sm btn-outline-primary">
-                                                    <i class="fas fa-trash-alt fa-fw"></i>
+                                                @endcan
+
+                                               @can('delete', $post)
+                                               <button form="postDelForm{{ $post->id }}" class="btn btn-sm btn-outline-primary">
+                                                <i class="fas fa-trash-alt fa-fw"></i>
                                                 </button>
+                                               @endcan
                                            </div>
 
+                                            @can('delete', $post)
                                             <form action="{{ route('post.destroy', $post->id) }}" class="d-inline-block" id="postDelForm{{ $post->id }}" method="POST">
                                                 @csrf
                                                 @method('delete')
                                             </form>
+                                            @endcan
                                         </td>
                                         <td>
                                            {!! $post->show_time !!}

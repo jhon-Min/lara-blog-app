@@ -9,6 +9,7 @@ use App\Models\Photo;
 use App\Models\Post;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Intervention\Image\Facades\Image;
@@ -44,15 +45,6 @@ class PostController extends Controller
      */
     public function store(StorePostRequest $request)
     {
-        $request->validate([
-            "title" => "required|min:3|max:255",
-            "category" => "required|integer|exists:categories,id",
-            "description" => "required|min:10",
-            "photos" => "nullable",
-            "photos.*" => "file|max:3000|mimes:jpg,png",
-            "tags" => "required",
-            "tags.*" => "integer|exists:tags,id"
-        ]);
 
         DB::beginTransaction();
         try {
@@ -115,6 +107,7 @@ class PostController extends Controller
      */
     public function show(Post $post)
     {
+        Gate::authorize('view', $post);
         return view('posts.show', compact('post'));
     }
 
@@ -126,6 +119,7 @@ class PostController extends Controller
      */
     public function edit(Post $post)
     {
+        Gate::authorize('update', $post);
         return view('posts.edit', compact('post'));
     }
 
@@ -138,11 +132,6 @@ class PostController extends Controller
      */
     public function update(UpdatePostRequest $request, Post $post)
     {
-        $request->validate([
-            "title" => "required|min:3|unique:posts,title,$post->id|max:255",
-            "category" => "required|integer|exists:categories,id",
-            "description" => "required|min:10"
-        ]);
 
        $post->title = $request->title;
        $post->slug = Str::slug($request->title);
@@ -168,6 +157,7 @@ class PostController extends Controller
      */
     public function destroy(Post $post)
     {
+        Gate::authorize('delete', $post);
         foreach ($post->photos as $photo) {
             // orginal file and thumbnail delete
             Storage::delete("public/photo/".$photo->name);

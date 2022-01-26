@@ -15,19 +15,13 @@
                             @csrf
 
                             <div class="mb-3">
-                                <lable class="form-label">Post Title</lable>
-                                <input type="text" class="form-control @error('title')
-                                    is-invalid
-                                @enderror" name="title" value="{{ old('title') }}">
-                                @error('title')
-                                    <span class="small text-danger">{{ $message }}</span>
-                                @enderror
+                              <x-input title="Post Title" name="title" />
                             </div>
 
                             <div class="mb-4">
                                 <label for="" class="form-label">Select Category</label>
                                 <select class="form-select @error('category') is-invalid @enderror" name="category">
-                                    @foreach (\App\Models\Category::all() as $category)
+                                    @foreach ($categories as $category)
                                         <option value="{{ $category->id }}" {{ $category->id == old('category') ? 'selected' : '' }}>{{ $category->title }}</option>
                                     @endforeach
                                 </select>
